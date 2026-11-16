@@ -18,6 +18,18 @@ int nhap_so_nguyen() {
         }
     }
 }
+string chuan_hoa_loai(string loai){
+	if(loai.empty()) return "";
+	for (size_t i = 0; i < loai.length(); i++){
+		loai[i] = tolower(loai[i]);
+	}
+	loai[0] = toupper(loai[0]);
+	return loai;
+}
+bool kiem_tra_loai_xe(string& loai){
+	loai = chuan_hoa_loai(loai);
+	return (loai == "Car" || loai == "Motorcycle" || loai == "Bicycle");
+}
 class phuong_tien {
 private:
     int ma_xe;
@@ -71,6 +83,7 @@ public:
     bool chua(int ma_xe) const;
     void hien_thi() const;
     bool co_loai(string loai, int& dem, double& tong) const;
+    void hien_thi_theo_loai(string loai) const;
 };
 bai_xe::bai_xe() : ma_bai(0), kich_thuoc('S'), so_xe_hien_tai(0) {}
 bai_xe::bai_xe(int ma, char kt) : ma_bai(ma), kich_thuoc(kt), so_xe_hien_tai(0) {}
@@ -120,6 +133,14 @@ bool bai_xe::co_loai(string loai, int& dem, double& tong) const {
         }
     }
     return dem > 0;
+}
+void bai_xe::hien_thi_theo_loai(string loai) const{
+	cout << "Bai " << ma_bai << "[" << kich_thuoc << "]":\n;
+	for(int i = 0; i < so_xe_hien_tai; i++){
+		if(mang_xe[i].lay_loai_xe() == loai){
+			mang_xe[i].hien_thi();
+		}
+	}
 }
 class SystemInterface {
 private:
@@ -176,7 +197,7 @@ void SystemInterface::runMenu() {
             if (kiem_tra_trung_ma_bai(ma)) {
                 cout << "Canh bao: ID da ton tai! ";
                 ma = tao_ma_ngau_nhien();
-                cout << "He thong tu dong gán ID ngau nhien: " << ma << "\n";
+                cout << "He thong tu dong gÃ¡n ID ngau nhien: " << ma << "\n";
             }
             char kt;
             cout << "Kich thuoc (S/M/L): "; cin >> kt;
@@ -198,7 +219,14 @@ void SystemInterface::runMenu() {
                 cout << "He thong tu dong gan ID ngau nhien: " << ma << "\n";
             }
             string loai;
-            cout << "Loai (Car/Motorcycle/Bicycle): "; cin >> loai;
+            while (true){
+            	cout << "Loai (Car/Motorcycle/Bicycle): "; 
+				cin >> loai;
+				if(kiem_tra_loai_xe(loai)){
+					break;
+				}
+				cout << "Loai xe khong hop le, vui long nhap lai.\n";
+        	}
             cout << "Gio vao (0-23): "; int gio = nhap_so_nguyen();
             cout << "Thoi luong (1-23): "; int tg = nhap_so_nguyen();
             phuong_tien v(ma, loai, gio, tg);
@@ -273,13 +301,25 @@ void SystemInterface::runMenu() {
         }
         case 7: {
             string loai;
-            cout << "Loai xe (Car/Motorcycle/Bicycle): "; cin >> loai;
+            while (true){
+            	cout << "Loai (Car/Motorcycle/Bicycle): "; 
+				cin >> loai;
+				if(kiem_tra_loai_xe(loai)){
+					break;
+				}
+				cout << "Loai xe khong hop le, vui long nhap lai.\n";
+        	}
             int dem; double tong;
-            for (int i = 0; i < so_bai_hien_tai; ++i) {
-                if (mang_bai[i].co_loai(loai, dem, tong)) {
-                    mang_bai[i].hien_thi();
-                }
-            }
+            bool co_xe_nao = false;
+            for(int i - 0; i < so_bai_hien_tai; i++){
+            	if(mang_bai[i].co_loai(loai, dem, tong)){
+            		mang_bai[i].hien_thi_theo_loai(loai);
+            		co_xe_nao = true;
+				}
+			}
+			if(!co_xe_nao){
+				cout << "Khong tim thay xe loai " << loai << "trong he thong.\n";
+			}
             break;
         }
         case 8: {
