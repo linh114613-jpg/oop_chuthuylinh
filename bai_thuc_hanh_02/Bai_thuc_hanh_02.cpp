@@ -5,17 +5,18 @@
 #include <ctime>
 #include <limits>
 using namespace std;
-int nhap_so_nguyen() {
+int nhap_so_nguyen(int min_val = -2147483648, int max_val = 2147483648) {
     int gia_tri;
     while (true) {
-        if (cin >> gia_tri) {
-            return gia_tri;
-        }
-        else {
-            cout << "Loi kieu du lieu. Vui long nhap lai so: ";
+        if (cin >> gia_tri && cin.peek() == '\n') {
+        	if(gia_tri >= min_val && gia_tri <= max_val){
+            	return gia_tri;
+            }
+        }else{
+        	cout << "Loi kieu du lieu. Vui long nhap lai so: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
+		}
     }
 }
 string chuan_hoa_loai(string loai){
@@ -227,8 +228,8 @@ void SystemInterface::runMenu() {
 				}
 				cout << "Loai xe khong hop le, vui long nhap lai.\n";
         	}
-            cout << "Gio vao (0-23): "; int gio = nhap_so_nguyen();
-            cout << "Thoi luong (1-23): "; int tg = nhap_so_nguyen();
+            cout << "Gio vao (0-23): "; int gio = nhap_so_nguyen(0, 23);
+            cout << "Thoi luong (1-23): "; int tg = nhap_so_nguyen(1, 23);
             phuong_tien v(ma, loai, gio, tg);
             bool ok = false;
             for (int i = 0; i < so_bai_hien_tai; ++i) {
